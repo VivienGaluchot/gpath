@@ -1,0 +1,47 @@
+body {
+    /* background-color: #121212; */
+}
+
+.path svg {
+    width: 100%;
+    height: 100%;
+}
+
+.gcode {
+    max-height: 50rem;
+    overflow: auto;
+    list-style: none;
+    padding: 0;
+    background-color: #0004;
+    scrollbar-color: #FFF4 #0004;
+    scrollbar-width: thin;
+}
+
+.gcode li {
+    font-family: monospace;
+    padding: .1rem;
+    color: #FFF8;
+    white-space: pre;
+}
+
+.gcode li:hover {
+    background-color: #0001;
+    color: #FFFF;
+}
+
+.gcode li .line-index {
+    min-width: 3rem;
+    display: inline-block;
+    text-align: right;
+    user-select: none;
+    color: #FFF2;
+}
+
+.gcode li .line-data {
+    padding-left: 1rem;
+    display: inline-block;
+}
+
+.gcode li .line-cmt {
+    color: #AFA8;
+}

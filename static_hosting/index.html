@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-dark-5@1.1.3/dist/css/bootstrap-dark.min.css">
+    <link rel="stylesheet" href="app.css">
+    <title>Gpath Editor</title>
+</head>
+
+<body>
+    <div class="container p-5">
+        <h1 class="mb-5">Gpath Editor</h1>
+        <div class="row g-5">
+            <div class="col-8">
+                <h2>Path</h2>
+                <div class="path mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 20 20">
+                        <rect width="10" height="10" x="0" y="0" fill="#101010" />
+                        <rect width="10" height="10" x="10" y="0" fill="#151515" />
+                        <rect width="10" height="10" x="10" y="10" fill="#101010" />
+                        <rect width="10" height="10" x="0" y="10" fill="#151515" />
+                    </svg>
+                </div>
+                <h2>Settings</h2>
+                <form>
+                    <div class="row">
+                        <div class="form-group col-auto">
+                            <label for="x-span">X Span (in mm)</label>
+                            <input type="number" class="form-control" id="x-span" aria-describedby="x-span-help" placeholder="Enter X Span" value="200">
+                            <small id="x-span-help" class="form-text text-muted">Number of mm available in the X direction in the work area.</small>
+                        </div>
+                        <div class="form-group col-auto">
+                            <label for="y-span">Y Span (in mm)</label>
+                            <input type="number" class="form-control" id="y-span" aria-describedby="y-span-help" placeholder="Enter X Span" value="200">
+                            <small id="y-span-help" class="form-text text-muted">Number of mm available in the Y direction in the work area.</small>
+                        </div>
+                        <div class="form-group col-auto">
+                            <button type="button" class="btn btn-primary">Apply</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-4">
+                <h2>GCODE</h2>
+                <div>
+                    <ul class="gcode">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
