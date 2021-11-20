@@ -51,9 +51,12 @@ function uiLoadGcode(gcodeStr) {
             let elCode = document.createElement("span");
             elCode.classList.add("line-code");
             elCode.textContent = data.code;
-            elCode.setAttribute("data-bs-toggle", "tooltip");
-            elCode.setAttribute("data-bs-placement", "top");
-            elCode.setAttribute("title", GCode.getMan(data.code).name);
+            let man = GCode.getMan(data.code);
+            if (man) {
+                elCode.setAttribute("data-bs-toggle", "tooltip");
+                elCode.setAttribute("data-bs-placement", "top");
+                elCode.setAttribute("title", man.name);
+            }
             new bootstrap.Tooltip(elCode);
             li.appendChild(elCode);
 
@@ -68,6 +71,7 @@ function uiLoadGcode(gcodeStr) {
             li.appendChild(elComment);
         } else {
             let span = document.createElement("span");
+            span.classList.add("line-warn");
             span.textContent = line;
             li.appendChild(span);
         }
@@ -85,10 +89,10 @@ function uiLoadGcode(gcodeStr) {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    let dummyGcode = "";
-    for (let i = 0; i < 100; i++) {
+    let dummyGcode = "; Dummy code\n";
+    for (let i = 0; i < 50; i++) {
         dummyGcode += `G${i} 01 02 03 ; dummy !\n`;
-        dummyGcode += `G${i} 05 ; 02 03 ; dummy !\n`;
+        dummyGcode += `G${i} 05\n`;
     }
     uiLoadGcode(dummyGcode);
 

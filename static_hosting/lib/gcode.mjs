@@ -276,7 +276,7 @@ const docExtract = {
 }
 
 function parseLine(line) {
-    const regex = /([A-Z][0-9\.]*)([^;]*)(;.*)?/;
+    const regex = /^(?:([A-Z][0-9\.]*)([^;]*))?(;.*)?$/;
     let match = line.match(regex);
     if (match) {
         let code = match[1];
@@ -294,8 +294,7 @@ function getMan(code) {
     if (code in docExtract) {
         return docExtract[code];
     } else {
-        console.warn("code not found", code);
-        return { name: "unknown code" };
+        return null;
     }
 }
 

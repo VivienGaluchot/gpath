@@ -22,12 +22,10 @@ body {
     padding: .1rem;
     color: #FFF8;
     white-space: pre;
-    display: inline-block;
 }
 
 .gcode li:hover {
     background-color: #0001;
-    color: #FFFF;
 }
 
 .gcode li .line-index {
@@ -36,10 +34,11 @@ body {
     text-align: right;
     user-select: none;
     color: #FFF2;
+    margin-right: 1.5rem;
 }
 
 .gcode li .line-code {
-    padding-left: 1rem;
+    color: #FFFA;
 }
 
 .gcode li .line-args {
@@ -48,4 +47,8 @@ body {
 
 .gcode li .line-cmt {
     color: #AFA8;
+}
+
+.gcode li .line-warn {
+    color: rgba(255, 247, 136, 0.533);
 }
