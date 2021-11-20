@@ -22,6 +22,7 @@ body {
     padding: .1rem;
     color: #FFF8;
     white-space: pre;
+    display: inline-block;
 }
 
 .gcode li:hover {
@@ -37,9 +38,12 @@ body {
     color: #FFF2;
 }
 
-.gcode li .line-data {
+.gcode li .line-code {
     padding-left: 1rem;
-    display: inline-block;
+}
+
+.gcode li .line-args {
+    color: #AAF8;
 }
 
 .gcode li .line-cmt {

@@ -1,3 +1,5 @@
+import * as GCode from './lib/gcode.mjs'
+
 /* sgv tools */
 const svgNS = "http://www.w3.org/2000/svg";
 
@@ -44,26 +46,31 @@ function uiLoadGcode(gcodeStr) {
         lineIndex.textContent = index;
         li.appendChild(lineIndex);
 
-        let command;
-        let comment;
-        let comSplit = line.search(";");
-        if (comSplit >= 0) {
-            command = line.slice(0, comSplit);
-            comment = line.slice(comSplit);
+        let data = GCode.parseLine(line);
+        if (data) {
+            let elCode = document.createElement("span");
+            elCode.classList.add("line-code");
+            elCode.textContent = data.code;
+            elCode.setAttribute("data-bs-toggle", "tooltip");
+            elCode.setAttribute("data-bs-placement", "top");
+            elCode.setAttribute("title", GCode.getMan(data.code).name);
+            new bootstrap.Tooltip(elCode);
+            li.appendChild(elCode);
+
+            let elArgs = document.createElement("span");
+            elArgs.classList.add("line-args");
+            elArgs.textContent = data.args;
+            li.appendChild(elArgs);
+
+            let elComment = document.createElement("span");
+            elComment.classList.add("line-cmt");
+            elComment.textContent = data.comment;
+            li.appendChild(elComment);
         } else {
-            command = line;
-            comment = "";
+            let span = document.createElement("span");
+            span.textContent = line;
+            li.appendChild(span);
         }
-
-        let lineData = document.createElement("span");
-        lineData.classList.add("line-data");
-        lineData.textContent = command;
-        li.appendChild(lineData);
-
-        let lineComment = document.createElement("span");
-        lineComment.classList.add("line-cmt");
-        lineComment.textContent = comment;
-        li.appendChild(lineComment);
         return li;
     }
 
@@ -72,6 +79,7 @@ function uiLoadGcode(gcodeStr) {
         index += 1;
         ul.appendChild(lineToLi(index, line));
     }
+
 }
 
 
