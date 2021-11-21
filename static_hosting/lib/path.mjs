@@ -69,8 +69,7 @@ function svgRect(x, y, w, h, fill) {
     return el;
 }
 
-// <line x1="0" y1="80" x2="100" y2="20" stroke="black" />
-function svgLine(x1, y1, x2, y2, stroke) {
+function svgLine(x1, y1, x2, y2, stroke, width) {
     let el = document.createElementNS(svgNS, "line");
     el.setAttribute("x1", x1);
     el.setAttribute("y1", y1);
@@ -78,15 +77,16 @@ function svgLine(x1, y1, x2, y2, stroke) {
     el.setAttribute("y2", y2);
     el.setAttribute("stroke", stroke);
     el.setAttribute("stroke-linecap", "round");
-    el.setAttribute("stroke-width", 1);
+    el.setAttribute("stroke-width", width);
     return el;
 }
 
-// conf : { spanX, spanY, maxDrawZ };
+// conf : { spanX, spanY, maxDrawZ, drawSize };
 function drawPath(svgEl, gcodeStr, conf) {
     let spanX = conf.spanX;
     let spanY = conf.spanY;
     let maxDrawZ = conf.maxDrawZ;
+    let drawSize = conf.drawSize;
 
     while (svgEl.firstChild) {
         svgEl.firstChild.remove();
@@ -101,10 +101,9 @@ function drawPath(svgEl, gcodeStr, conf) {
 
     let prevPoint = null;
     for (let point of getPathFromGcode(gcodeStr)) {
-        console.log(point);
         if (prevPoint) {
             if (prevPoint.z && point.z <= maxDrawZ) {
-                svgEl.appendChild(svgLine(prevPoint.x, prevPoint.y, point.x, point.y, "#888"));
+                svgEl.appendChild(svgLine(prevPoint.x, prevPoint.y, point.x, point.y, "#888", drawSize));
             }
         }
         prevPoint = point;

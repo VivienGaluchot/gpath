@@ -56,6 +56,13 @@ function uiLoadGcode(gcodeStr) {
 }
 
 
+/** update editor and graphic view content */
+function loadGcode(gcodeStr, conf) {
+    let el = document.querySelector(".path>svg");
+    uiLoadGcode(gcodeStr);
+    Path.drawPath(el, gcodeStr, conf);
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
     let dummyGcode = "; Dummy code\n";
@@ -81,30 +88,64 @@ document.addEventListener("DOMContentLoaded", () => {
     dummyGcode += "G0 Y-10\n";
 
 
-    let conf = { spanX: 200, spanY: 200, maxDrawZ: 10 };
-
-    /** update editor and graphic view content */
-    function loadGcode(gcodeStr) {
-        let el = document.querySelector(".path>svg");
-        uiLoadGcode(gcodeStr);
-        Path.drawPath(el, gcodeStr, conf);
-    }
-
-    function updateSpan() {
-        let userSpanX = Number(document.getElementById("x-span").value);
-        let userSpanY = Number(document.getElementById("y-span").value);
-        let userMaxDrawZ = Number(document.getElementById("z-max-draw").value);
-        if (Number.isFinite(userSpanX) && userSpanX > 0 &&
-            Number.isFinite(userSpanY) && userSpanY > 0 &&
-            Number.isFinite(userMaxDrawZ)) {
-            conf.spanX = userSpanX;
-            conf.spanY = userSpanY;
-            conf.maxDrawZ = userMaxDrawZ;
-            loadGcode(dummyGcode)
-        }
-    }
-    document.getElementById("span-apply").onclick = () => {
-        updateSpan();
+    let conf = {
+        spanX: 200,
+        spanY: 200,
+        maxDrawZ: 10,
+        drawSize: 1
     };
-    updateSpan();
+
+    function applyUserConf() {
+        function setValid(el, isValid) {
+            if (isValid) {
+                el.classList.remove("is-invalid");
+            } else {
+                el.classList.add("is-invalid");
+            }
+        }
+
+        let elSpanX = document.getElementById("x-span");
+        let spanX = Number(elSpanX.value);
+        if (Number.isFinite(spanX) && spanX > 0) {
+            conf.spanX = spanX;
+            setValid(elSpanX, true);
+        } else {
+            setValid(elSpanX, false);
+        }
+
+        let elSpanY = document.getElementById("y-span");
+        let spanY = Number(elSpanY.value);
+        if (Number.isFinite(spanY) && spanY > 0) {
+            conf.spanY = spanY;
+            setValid(elSpanY, true);
+        } else {
+            setValid(elSpanY, false);
+        }
+
+        let elDrawSize = document.getElementById("draw-size");
+        let drawSize = Number(elDrawSize.value);
+        if (Number.isFinite(drawSize) && drawSize > 0) {
+            conf.drawSize = drawSize;
+            setValid(elDrawSize, true);
+        } else {
+            setValid(elDrawSize, false);
+        }
+
+        let elMaxDrawZ = document.getElementById("z-max-draw");
+        let maxDrawZ = Number(elMaxDrawZ.value);
+        if (Number.isFinite(maxDrawZ)) {
+            conf.maxDrawZ = maxDrawZ;
+            setValid(elMaxDrawZ, true);
+        } else {
+            setValid(elMaxDrawZ, false);
+        }
+
+        loadGcode(dummyGcode, conf);
+    }
+
+    document.getElementById("apply-settings").onclick = () => {
+        applyUserConf();
+    };
+
+    applyUserConf();
 });

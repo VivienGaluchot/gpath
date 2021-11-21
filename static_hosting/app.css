@@ -7,6 +7,11 @@ body {
     height: 100%;
 }
 
+fieldset {
+    font-size: 1.2rem;
+    margin-bottom: .2rem;
+}
+
 .gcode {
     max-height: 50rem;
     overflow: auto;
