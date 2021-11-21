@@ -1,7 +1,7 @@
 // from https://marlinfw.org/meta/gcode/
 const docExtract = {
-    "G0": { name: "Linear Move", url: "G000-G001.html" },
-    "G1": { name: "Linear Move", url: "G000-G001.html" },
+    "G0": { name: "Linear Move (fast, non-extrusion)", url: "G000-G001.html" },
+    "G1": { name: "Linear Move (more precise)", url: "G000-G001.html" },
     "G2": { name: "Arc or Circle Move" },
     "G3": { name: "Arc or Circle Move" },
     "G4": { name: "Dwell" },
@@ -275,20 +275,39 @@ const docExtract = {
     "T6": { name: "Select Tool" }
 }
 
+function parseArgs(args) {
+    const argRe = /([A-Z])(.*)/;
+    let map = new Map();
+    if (args != undefined) {
+        for (let arg of args.split(" ")) {
+            let match = arg.match(argRe);
+            if (match) {
+                map.set(match[1], Number.parseFloat(match[2]));
+            }
+        }
+    }
+    return map;
+}
+
 function parseLine(line) {
-    const regex = /^(?:([A-Z][0-9\.]*)([^;]*))?(;.*)?$/;
-    let match = line.match(regex);
+    const lineRe = /^(?:([A-Z][0-9\.]*)([^;]*))?(;.*)?$/;
+    let match = line.match(lineRe);
     if (match) {
         let code = match[1];
         let args = match[2];
         let comment = match[3];
-        return { command: `${code}${args}`, code: code, args: args, comment: comment };
+        return {
+            command: `${code}${args}`,
+            code: code,
+            args: args,
+            comment: comment,
+            argMap: parseArgs(args)
+        };
     } else {
         console.warn("unable to parse gcode line", line);
         return null;
     }
 }
-
 
 function getMan(code) {
     if (code in docExtract) {
@@ -298,4 +317,4 @@ function getMan(code) {
     }
 }
 
-export { parseLine, getMan }
+export { parseLine, parseArgs, getMan }

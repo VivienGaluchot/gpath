@@ -1,37 +1,7 @@
 import * as GCode from './lib/gcode.mjs'
+import * as Path from './lib/path.mjs'
 
-/* sgv tools */
-const svgNS = "http://www.w3.org/2000/svg";
-
-function svgRect(x, y, w, h) {
-    let rect = document.createElementNS(svgNS, "rect");
-    rect.setAttribute("x", x);
-    rect.setAttribute("y", y);
-    rect.setAttribute("width", w);
-    rect.setAttribute("height", h);
-    return rect;
-}
-
-
-/* redraw the path in the svg element */
-function drawPath(path, spanX, spanY) {
-    console.log(spanX, spanY)
-    let el = document.querySelector(".path>svg");
-    while (el.firstChild) {
-        el.firstChild.remove();
-    }
-    el.setAttribute("viewBox", `0 0 ${spanX} ${spanY}`);
-    for (let x = 0; x < (spanX / 10); x++) {
-        for (let y = 0; y < (spanY / 10); y++) {
-            let rect = svgRect(10 * x, 10 * y, 10, 10);
-            rect.setAttribute("fill", ((x + y) % 2 == 0) ? "#0004" : "#0006");
-            el.appendChild(rect);
-        }
-    }
-}
-
-
-/* create UI element to display GCODE */
+/* update editor content */
 function uiLoadGcode(gcodeStr) {
     let ul = document.querySelector(".gcode");
     while (ul.firstChild) {
@@ -83,31 +53,55 @@ function uiLoadGcode(gcodeStr) {
         index += 1;
         ul.appendChild(lineToLi(index, line));
     }
-
 }
 
 
 
 document.addEventListener("DOMContentLoaded", () => {
     let dummyGcode = "; Dummy code\n";
-    for (let i = 0; i < 50; i++) {
-        dummyGcode += `G${i} 01 02 03 ; dummy !\n`;
-        dummyGcode += `G${i} 05\n`;
+    dummyGcode += "G28 ; reset to home\n";
+    dummyGcode += "G0 F1500 ; set the feedrate to 1500 mm/min\n";
+    dummyGcode += "G0 Z10\n";
+    dummyGcode += "G0 X10\n";
+    dummyGcode += "G0 Y10\n";
+    dummyGcode += "G90 ; absolute\n";
+    dummyGcode += "G0 X15 Y5\n";
+    dummyGcode += "G0 X16 Y6\n";
+    dummyGcode += "G91 ; relative\n";
+    dummyGcode += "G0 X1 Y1\n";
+    dummyGcode += "G0 X1 Y1\n";
+    dummyGcode += "G90 ; absolute\n";
+    dummyGcode += "G0 Z20 ; high\n";
+    dummyGcode += "G0 X100 Y100\n";
+    dummyGcode += "G0 Z10 ; low\n";
+    dummyGcode += "G91 ; relative\n";
+    dummyGcode += "G0 X10\n";
+    dummyGcode += "G0 Y10\n";
+    dummyGcode += "G0 X-10\n";
+    dummyGcode += "G0 Y-10\n";
+
+
+    let conf = { spanX: 200, spanY: 200, maxDrawZ: 10 };
+
+    /** update editor and graphic view content */
+    function loadGcode(gcodeStr) {
+        let el = document.querySelector(".path>svg");
+        uiLoadGcode(gcodeStr);
+        Path.drawPath(el, gcodeStr, conf);
     }
-    uiLoadGcode(dummyGcode);
-
-
-    let spanX = 200;
-    let spanY = 200;
 
     function updateSpan() {
         let userSpanX = Number(document.getElementById("x-span").value);
         let userSpanY = Number(document.getElementById("y-span").value);
-        if (Number.isFinite(userSpanX) && Number.isFinite(userSpanY) && userSpanX > 0 && userSpanY > 0) {
-            spanX = userSpanX;
-            spanY = userSpanY;
+        let userMaxDrawZ = Number(document.getElementById("z-max-draw").value);
+        if (Number.isFinite(userSpanX) && userSpanX > 0 &&
+            Number.isFinite(userSpanY) && userSpanY > 0 &&
+            Number.isFinite(userMaxDrawZ)) {
+            conf.spanX = userSpanX;
+            conf.spanY = userSpanY;
+            conf.maxDrawZ = userMaxDrawZ;
+            loadGcode(dummyGcode)
         }
-        drawPath(null, spanX, spanY);
     }
     document.getElementById("span-apply").onclick = () => {
         updateSpan();
