@@ -1,3 +1,6 @@
+"use strict";
+
+
 // from https://marlinfw.org/meta/gcode/
 const docExtract = {
     "G0": { name: "Linear Move (fast, non-extrusion)", url: "G000-G001.html" },
@@ -275,40 +278,6 @@ const docExtract = {
     "T6": { name: "Select Tool" }
 }
 
-function parseArgs(args) {
-    const argRe = /([A-Z])(.*)/;
-    let map = new Map();
-    if (args != undefined) {
-        for (let arg of args.split(" ")) {
-            let match = arg.match(argRe);
-            if (match) {
-                map.set(match[1], Number.parseFloat(match[2]));
-            }
-        }
-    }
-    return map;
-}
-
-function parseLine(line) {
-    const lineRe = /^(?:([A-Z][0-9\.]*)([^;]*))?(;.*)?$/;
-    let match = line.match(lineRe);
-    if (match) {
-        let code = match[1];
-        let args = match[2];
-        let comment = match[3];
-        return {
-            command: `${code}${args}`,
-            code: code,
-            args: args,
-            comment: comment,
-            argMap: parseArgs(args)
-        };
-    } else {
-        console.warn("unable to parse gcode line", line);
-        return null;
-    }
-}
-
 function getMan(code) {
     if (code in docExtract) {
         return docExtract[code];
@@ -317,4 +286,121 @@ function getMan(code) {
     }
 }
 
-export { parseLine, parseArgs, getMan }
+class Line {
+    constructor(str) {
+        this.str = str;
+        this.isParsed = false;
+
+        // array of { str:String, code:?String, value:?String }
+        this.tokens = [];
+        // String
+        this.comment = null;
+
+        const lineRe = /^([^;]*)(;.*)?$/;
+        const tokenRe = /^([A-Z])(-?[0-9\.]*)(\s|$)+/;
+
+        let lineMatch = str.match(lineRe);
+        if (lineMatch) {
+            this.comment = lineMatch[2];
+            let payload = lineMatch[1];
+            while (payload.length > 0) {
+                let token = null;
+                let tokenMatch = payload.match(tokenRe);
+                if (tokenMatch) {
+                    token = tokenMatch[0];
+                    let code = tokenMatch[1];
+                    let value = tokenMatch[2];
+                    let space = tokenMatch[3];
+                    this.tokens.push({ str: `${code}${value}`, code: code, value: value, space: space });
+                } else {
+                    token = payload;
+                    this.tokens.push({ str: token });
+                }
+                payload = payload.slice(token.length);
+            }
+            this.hasCode = this.tokens.length > 0 && this.tokens[0].code;
+            this.isParsed = true;
+        }
+    }
+
+    // return the first part of the line
+    // [M0] A1 B2 str arg
+    getCode() {
+        if (this.hasCode) {
+            return this.tokens[0];
+        } else {
+            console.warn("line could not be parsed");
+        }
+        return null;
+    }
+
+    // return the matching arg in the line
+    // M0 [A1 B2] str arg
+    getArg(argCode) {
+        if (this.hasCode) {
+            for (let token of this.tokens.slice(1)) {
+                if (token.code == argCode) {
+                    return token;
+                }
+            }
+        } else {
+            console.warn("line could not be parsed");
+        }
+        return null;
+    }
+
+    // return the last arg string
+    // M0 A1 B2 [str arg]
+    getLastArgStr() {
+        if (this.hasCode) {
+            if (!this.tokens[this.tokens.length - 1].code) {
+                return this.tokens[this.tokens.length - 1].str;
+            } else {
+                console.warn("last token is not a string");
+            }
+        } else {
+            console.warn("line could not be parsed");
+        }
+        return null;
+    }
+
+    // yield editor tokens according to str loaded
+    *
+    getEditorTokens() {
+        if (!this.isParsed) {
+            yield { class: "unparsed", str: this.str };
+        } else {
+            if (this.hasCode) {
+                let first = this.getCode();
+                let man = getMan(`${first.code}${first.value}`);
+                yield { class: "code", str: `${first.code}${first.value}`, man: man };
+                yield { str: first.space };
+
+                for (let tok of this.tokens.slice(1)) {
+                    if (tok.code != null) {
+                        yield { class: "arg", str: `${tok.code}${tok.value}` };
+                        yield { str: tok.space };
+                    } else {
+                        yield { class: "arg-str", str: tok.str };
+                    }
+                }
+            }
+            if (this.comment) {
+                yield { class: "comment", str: this.comment };
+            }
+        }
+    }
+}
+
+
+class Document {
+    constructor(str) {
+        this.lines = [];
+        for (let line of str.split("\n")) {
+            this.lines.push(new Line(line));
+        }
+    }
+}
+
+
+export { Document }

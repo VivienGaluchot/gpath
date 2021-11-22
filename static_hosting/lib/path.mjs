@@ -1,3 +1,5 @@
+"use strict";
+
 import * as GCode from './gcode.mjs'
 
 class PathPoint {
@@ -24,7 +26,7 @@ class PathPoint {
     }
 }
 
-function* getPathFromGcode(gcodeStr) {
+function* getPathFromGcode(doc) {
     const moveCode0 = "G0";
     const moveCode1 = "G0";
     const homeCode = "G28";
@@ -34,22 +36,24 @@ function* getPathFromGcode(gcodeStr) {
     let isRelative = false;
     let currentPoint = new PathPoint(0, 0, 0);
 
-    for (let line of gcodeStr.split("\n")) {
-        let data = GCode.parseLine(line);
-        if (data) {
-            let args = data.argMap;
-            if (data.code == homeCode) {
+    for (let line of doc.lines) {
+        if (line.hasCode) {
+            let code = line.getCode().str;
+            if (code == homeCode) {
                 currentPoint = new PathPoint(0, 0, 0);
                 yield currentPoint;
-            } else if (data.code == moveCode0 || data.code == moveCode1) {
-                let x = args.get("X");
-                let y = args.get("Y");
-                let z = args.get("Z");
+            } else if (code == moveCode0 || code == moveCode1) {
+                let x = line.getArg("X");
+                let y = line.getArg("Y");
+                let z = line.getArg("Z");
+                x = x ? Number.parseFloat(x.value) : null;
+                y = y ? Number.parseFloat(y.value) : null;
+                z = z ? Number.parseFloat(z.value) : null;
                 currentPoint = currentPoint.getNext(x, y, z, isRelative);
                 yield currentPoint;
-            } else if (data.code == absCode) {
+            } else if (code == absCode) {
                 isRelative = false;
-            } else if (data.code == relCode) {
+            } else if (code == relCode) {
                 isRelative = true;
             }
         }

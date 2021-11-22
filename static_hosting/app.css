@@ -34,7 +34,7 @@ fieldset {
     background-color: #0001;
 }
 
-.gcode li .line-index {
+.gcode li .index {
     min-width: 3rem;
     display: inline-block;
     text-align: right;
@@ -43,23 +43,27 @@ fieldset {
     margin-right: 1.5rem;
 }
 
-.gcode li .line-code {
+.gcode li .code {
     color: #FFFA;
 }
 
-.gcode li .line-code:hover {
-    color: #FFFA;
+.gcode li span:hover {
     text-decoration: underline;
 }
 
-.gcode li .line-args {
+.gcode li .arg {
     color: #AAF8;
 }
 
-.gcode li .line-cmt {
+.gcode li .arg-str {
+    color: #AAF8;
+    text-decoration: underline;
+}
+
+.gcode li .comment {
     color: #AFA8;
 }
 
-.gcode li .line-warn {
+.gcode li .unparsed {
     color: rgba(255, 247, 136, 0.533);
 }

@@ -1,91 +1,106 @@
+"use strict";
+
 import * as GCode from './lib/gcode.mjs'
 import * as Path from './lib/path.mjs'
 
 /* update editor content */
-function uiLoadGcode(gcodeStr) {
+function uiLoadGcode(doc) {
     let ul = document.querySelector(".gcode");
     while (ul.firstChild) {
         ul.firstChild.remove();
     }
 
-    function lineToLi(index, line) {
+    let index = 0;
+    for (let line of doc.lines) {
+        index += 1;
         let li = document.createElement("li");
-
         let lineIndex = document.createElement("span");
-        lineIndex.classList.add("line-index");
+        lineIndex.classList.add("index");
         lineIndex.textContent = index;
         li.appendChild(lineIndex);
-
-        let data = GCode.parseLine(line);
-        if (data) {
-            let elCode = document.createElement("span");
-            elCode.classList.add("line-code");
-            elCode.textContent = data.code;
-            let man = GCode.getMan(data.code);
-            if (man) {
-                elCode.setAttribute("data-bs-toggle", "tooltip");
-                elCode.setAttribute("data-bs-placement", "top");
-                elCode.setAttribute("title", man.name);
+        for (let token of line.getEditorTokens()) {
+            let el = document.createElement("span");
+            if (token.class) {
+                el.classList.add(token.class);
             }
-            new bootstrap.Tooltip(elCode);
-            li.appendChild(elCode);
-
-            let elArgs = document.createElement("span");
-            elArgs.classList.add("line-args");
-            elArgs.textContent = data.args;
-            li.appendChild(elArgs);
-
-            let elComment = document.createElement("span");
-            elComment.classList.add("line-cmt");
-            elComment.textContent = data.comment;
-            li.appendChild(elComment);
-        } else {
-            let span = document.createElement("span");
-            span.classList.add("line-warn");
-            span.textContent = line;
-            li.appendChild(span);
+            if (token.man) {
+                el.setAttribute("data-bs-toggle", "tooltip");
+                el.setAttribute("data-bs-placement", "top");
+                el.setAttribute("title", token.man.name);
+                new bootstrap.Tooltip(el);
+            }
+            el.innerText = token.str;
+            li.appendChild(el);
         }
-        return li;
-    }
-
-    let index = 0;
-    for (let line of gcodeStr.split("\n")) {
-        index += 1;
-        ul.appendChild(lineToLi(index, line));
+        ul.appendChild(li);
     }
 }
 
 
 /** update editor and graphic view content */
 function loadGcode(gcodeStr, conf) {
+    let doc = new GCode.Document(gcodeStr);
     let el = document.querySelector(".path>svg");
-    uiLoadGcode(gcodeStr);
-    Path.drawPath(el, gcodeStr, conf);
+    uiLoadGcode(doc);
+    Path.drawPath(el, doc, conf);
 }
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    let dummyGcode = "; Dummy code\n";
+    let dummyGcode = "; Dummy test\n";
+    dummyGcode += "; Init\n";
+    dummyGcode += "G90 ; absolute\n";
+    dummyGcode += "G0 F5000 ; high feedrate\n";
     dummyGcode += "G28 ; reset to home\n";
-    dummyGcode += "G0 F1500 ; set the feedrate to 1500 mm/min\n";
-    dummyGcode += "G0 Z10\n";
-    dummyGcode += "G0 X10\n";
-    dummyGcode += "G0 Y10\n";
-    dummyGcode += "G90 ; absolute\n";
-    dummyGcode += "G0 X15 Y5\n";
-    dummyGcode += "G0 X16 Y6\n";
-    dummyGcode += "G91 ; relative\n";
-    dummyGcode += "G0 X1 Y1\n";
-    dummyGcode += "G0 X1 Y1\n";
-    dummyGcode += "G90 ; absolute\n";
-    dummyGcode += "G0 Z20 ; high\n";
-    dummyGcode += "G0 X100 Y100\n";
+    dummyGcode += "G0 Z12 ; high\n";
+    dummyGcode += "G0 X100 Y60 ; setup point\n";
     dummyGcode += "G0 Z10 ; low\n";
+    dummyGcode += "M0 Add pen an click ; pause\n";
+
+    dummyGcode += "; Square\n";
+    dummyGcode += "G90 ; absolute\n";
+    dummyGcode += "G0 F5000 ; high feedrate\n";
+    dummyGcode += "G0 Z12 ; high\n";
+    dummyGcode += "G0 X95 Y95 ; move\n";
+    dummyGcode += "G0 Z10 ; low\n";
+    dummyGcode += "G0 F1500 ; low feedrate\n";
     dummyGcode += "G91 ; relative\n";
     dummyGcode += "G0 X10\n";
     dummyGcode += "G0 Y10\n";
     dummyGcode += "G0 X-10\n";
     dummyGcode += "G0 Y-10\n";
+
+    dummyGcode += "; Square\n";
+    dummyGcode += "G90 ; absolute\n";
+    dummyGcode += "G0 F5000 ; high feedrate\n";
+    dummyGcode += "G0 Z12 ; high\n";
+    dummyGcode += "G0 X75 Y95 ; move\n";
+    dummyGcode += "G0 Z10 ; low\n";
+    dummyGcode += "G0 F1500 ; low feedrate\n";
+    dummyGcode += "G91 ; relative\n";
+    dummyGcode += "G0 X10\n";
+    dummyGcode += "G0 Y10\n";
+    dummyGcode += "G0 X-10\n";
+    dummyGcode += "G0 Y-10\n";
+
+    dummyGcode += "; Square\n";
+    dummyGcode += "G90 ; absolute\n";
+    dummyGcode += "G0 F5000 ; high feedrate\n";
+    dummyGcode += "G0 Z12 ; high\n";
+    dummyGcode += "G0 X115 Y95 ; move\n";
+    dummyGcode += "G0 Z10 ; low\n";
+    dummyGcode += "G0 F1500 ; low feedrate\n";
+    dummyGcode += "G91 ; relative\n";
+    dummyGcode += "G0 X10\n";
+    dummyGcode += "G0 Y10\n";
+    dummyGcode += "G0 X-10\n";
+    dummyGcode += "G0 Y-10\n";
+
+    dummyGcode += "; END\n";
+    dummyGcode += "G90 ; absolute\n";
+    dummyGcode += "G0 F5000 ; high feedrate\n";
+    dummyGcode += "G0 Z12 ; high\n";
+    dummyGcode += "G0 X0 Y200 ; move\n";
 
 
     let conf = {
