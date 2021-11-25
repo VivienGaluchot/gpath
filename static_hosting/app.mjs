@@ -38,8 +38,7 @@ function uiLoadGcode(doc) {
 
 
 /** update editor and graphic view content */
-function loadGcode(gcodeStr, conf) {
-    let doc = new GCode.Document(gcodeStr);
+function loadGcode(doc, conf) {
     let el = document.querySelector(".path>svg");
     uiLoadGcode(doc);
     Path.drawPath(el, doc, conf);
@@ -110,7 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
         drawSize: 1
     };
 
-    function applyUserConf() {
+    let doc = null;
+
+    function reload(gcodeStr) {
         function setValid(el, isValid) {
             if (isValid) {
                 el.classList.remove("is-invalid");
@@ -155,12 +156,21 @@ document.addEventListener("DOMContentLoaded", () => {
             setValid(elMaxDrawZ, false);
         }
 
-        loadGcode(dummyGcode, conf);
+        doc = new GCode.Document(gcodeStr);
+        loadGcode(doc, conf);
     }
 
     document.getElementById("apply-settings").onclick = () => {
-        applyUserConf();
+        reload(dummyGcode);
     };
 
-    applyUserConf();
+    document.getElementById("download-btn").onclick = () => {
+        let filename = document.getElementById("download-filename").value;
+        if (filename.length == 0) {
+            filename = "noname";
+        }
+        doc.download(`${filename}.gcode`);
+    };
+
+    reload(dummyGcode);
 });

@@ -393,12 +393,30 @@ class Line {
 }
 
 
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
+
 class Document {
     constructor(str) {
         this.lines = [];
         for (let line of str.split("\n")) {
             this.lines.push(new Line(line));
         }
+    }
+
+    download(filename) {
+        download(filename, this.lines.join("\n"));
     }
 }
 

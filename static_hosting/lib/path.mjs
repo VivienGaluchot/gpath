@@ -98,7 +98,8 @@ function drawPath(svgEl, gcodeStr, conf) {
     svgEl.setAttribute("viewBox", `0 0 ${spanX} ${spanY}`);
     for (let x = 0; x < (spanX / 10); x++) {
         for (let y = 0; y < (spanY / 10); y++) {
-            let fill = ((x + y) % 2 == 0) ? "#0004" : "#0006";
+            if ((x + y) % 2 == 0) {}
+            let fill = ((x + y) % 2 == 0) ? "#FFFFFF02" : "#FFFFFF08";
             svgEl.appendChild(svgRect(10 * x, 10 * y, 10, 10, fill));
         }
     }
