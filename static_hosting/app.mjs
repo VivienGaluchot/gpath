@@ -5,7 +5,7 @@ import * as Path from './lib/path.mjs'
 
 /* update editor content */
 function uiLoadGcode(doc) {
-    let ul = document.querySelector(".gcode");
+    let ul = document.querySelector("#edit-area");
     while (ul.firstChild) {
         ul.firstChild.remove();
     }
@@ -39,7 +39,7 @@ function uiLoadGcode(doc) {
 
 /** update editor and graphic view content */
 function loadGcode(doc, conf) {
-    let el = document.querySelector(".path>svg");
+    let el = document.querySelector("#draw-area");
     uiLoadGcode(doc);
     Path.drawPath(el, doc, conf);
 }

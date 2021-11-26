@@ -22,8 +22,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <fieldset>Span</fieldset>
                     <div class="row">
-                        <fieldset>Span</fieldset>
                         <div class="form-group col">
                             <label for="x-span">X Span in mm</label>
                             <input class="form-control" id="x-span" aria-describedby="x-span-help" value="200">
@@ -35,8 +35,8 @@
                             <small id="y-span-help" class="form-text text-muted">Number of mm available in the Y direction in the work area.</small>
                         </div>
                     </div>
+                    <fieldset>Draw</fieldset>
                     <div class="row">
-                        <fieldset>Draw</fieldset>
                         <div class="form-group col">
                             <label for="draw-size">Draw size in mm</label>
                             <input class="form-control" id="draw-size" aria-describedby="draw-size-help" value="1">
@@ -58,7 +58,7 @@
     </div>
 
     <div class="container-fluid d-flex flex-column h-100">
-        <header class="row p-3">
+        <header class="row p-3 align-items-end">
             <div class="col">
                 <h1 class="mb-0">Gpath Editor</h1>
             </div>
@@ -74,19 +74,23 @@
             </div>
         </header>
         <content class="row p-3 flex-grow-1">
-            <div class="col-6 path d-flex flex-column">
-                <svg class="flex-grow-1" xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 1 1">
-                    </svg>
+            <div class="col-7 d-flex flex-column">
+                <div class="path flex-grow-1">
+                    <div class="toolbar">
+                        <button class="btn btn-outline-primary">Reset view</button>
+                    </div>
+                    <svg id="draw-area" xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 1 1"></svg>
+                </div>
                 <small class="text-muted">grid size 10 mm</small>
             </div>
-            <div class="col-6 d-flex flex-column">
-                <ul class="gcode flex-grow-1">
+            <div class="col-5 d-flex flex-column">
+                <ul id="edit-area" class="gcode flex-grow-1">
                 </ul>
                 <small class="text-muted"><a href="https://marlinfw.org/meta/gcode/" target="_blank">Marlin GCODE reference</a></small>
             </div>
         </content>
-        <footer class="row p-3">
-            <div class="text-center text-muted">dev in progress</div>
+        <footer class="row">
+            <small>dev in progress</small>
         </footer>
     </div>
 

@@ -63,17 +63,24 @@ function* getPathFromGcode(doc) {
 /* sgv tools */
 const svgNS = "http://www.w3.org/2000/svg";
 
-function svgRect(x, y, w, h, fill) {
+function svgRect(x, y, w, h, fill, stroke, strokeW) {
     let el = document.createElementNS(svgNS, "rect");
     el.setAttribute("x", x);
     el.setAttribute("y", y);
     el.setAttribute("width", w);
     el.setAttribute("height", h);
-    el.setAttribute("fill", fill);
+    if (fill) {
+        el.setAttribute("fill", fill);
+    }
+    if (stroke) {
+        el.setAttribute("stroke", stroke);
+        el.setAttribute("stroke-linejoin", "round");
+        el.setAttribute("stroke-width", strokeW);
+    }
     return el;
 }
 
-function svgLine(x1, y1, x2, y2, stroke, width) {
+function svgLine(x1, y1, x2, y2, stroke, strokeW) {
     let el = document.createElementNS(svgNS, "line");
     el.setAttribute("x1", x1);
     el.setAttribute("y1", y1);
@@ -81,7 +88,7 @@ function svgLine(x1, y1, x2, y2, stroke, width) {
     el.setAttribute("y2", y2);
     el.setAttribute("stroke", stroke);
     el.setAttribute("stroke-linecap", "round");
-    el.setAttribute("stroke-width", width);
+    el.setAttribute("stroke-width", strokeW);
     return el;
 }
 
@@ -91,11 +98,12 @@ function drawPath(svgEl, gcodeStr, conf) {
     let spanY = conf.spanY;
     let maxDrawZ = conf.maxDrawZ;
     let drawSize = conf.drawSize;
+    let spanMargin = 5;
 
     while (svgEl.firstChild) {
         svgEl.firstChild.remove();
     }
-    svgEl.setAttribute("viewBox", `0 0 ${spanX} ${spanY}`);
+    svgEl.setAttribute("viewBox", `${-1 * spanMargin} ${-1 * spanMargin} ${spanX + 2 * spanMargin} ${spanY + 2 * spanMargin}`);
     for (let x = 0; x < (spanX / 10); x++) {
         for (let y = 0; y < (spanY / 10); y++) {
             if ((x + y) % 2 == 0) {}
@@ -103,6 +111,8 @@ function drawPath(svgEl, gcodeStr, conf) {
             svgEl.appendChild(svgRect(10 * x, 10 * y, 10, 10, fill));
         }
     }
+    let borderWidth = .5;
+    svgEl.appendChild(svgRect(0 - borderWidth / 2, 0 - borderWidth / 2, spanX + borderWidth, spanY + borderWidth, "#0000", "#000", borderWidth));
 
     let prevPoint = null;
     for (let point of getPathFromGcode(gcodeStr)) {

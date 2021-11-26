@@ -4,35 +4,67 @@ body {
     height: 100%;
 }
 
+
+/* layout */
+
 content {
     min-height: 0;
 }
 
+footer {
+    border-top: 1px solid rgb(5, 29, 51);
+    background-color: rgb(7, 80, 145);
+}
+
 content>div {
-    overflow: auto;
     height: 100%;
     max-height: 100%;
 }
 
 fieldset {
     font-size: 1.2rem;
-    margin-bottom: .2rem;
+    margin: .4rem 0 .2rem 0;
 }
 
 .gcode,
 .path {
+    min-height: 5rem;
+    height: 100%;
+    border-radius: .4rem;
+    background-color: #0004;
+    border: 1px solid #0006;
+}
+
+.path {
+    display: flex;
+}
+
+.path .toolbar {
+    width: 10rem;
+    border-right: 1px solid #0006;
+    padding: 1rem;
+}
+
+.path .toolbar button {
+    display: inline;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+
+/* path */
+
+.path {
     height: 100%;
 }
 
-.gcode,
 .path svg {
-    border-radius: .4rem;
-    background-color: #0004;
-}
-
-.path svg {
+    height: 100%;
     width: 100%;
 }
+
+
+/* gcode */
 
 .gcode {
     overflow: auto;
