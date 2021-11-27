@@ -2,46 +2,13 @@
 
 import * as GCode from './lib/gcode.mjs'
 import * as Path from './lib/path.mjs'
-
-/* update editor content */
-function uiLoadGcode(doc) {
-    let ul = document.querySelector("#edit-area");
-    while (ul.firstChild) {
-        ul.firstChild.remove();
-    }
-
-    let index = 0;
-    for (let line of doc.lines) {
-        index += 1;
-        let li = document.createElement("li");
-        let lineIndex = document.createElement("span");
-        lineIndex.classList.add("index");
-        lineIndex.textContent = index;
-        li.appendChild(lineIndex);
-        for (let token of line.getEditorTokens()) {
-            let el = document.createElement("span");
-            if (token.class) {
-                el.classList.add(token.class);
-            }
-            if (token.man) {
-                el.setAttribute("data-bs-toggle", "tooltip");
-                el.setAttribute("data-bs-placement", "top");
-                el.setAttribute("title", token.man.name);
-                new bootstrap.Tooltip(el);
-            }
-            el.innerText = token.str;
-            li.appendChild(el);
-        }
-        ul.appendChild(li);
-    }
-}
+import * as Editor from './lib/editor.mjs'
 
 
 /** update editor and graphic view content */
 function loadGcode(doc, conf) {
-    let el = document.querySelector("#draw-area");
-    uiLoadGcode(doc);
-    Path.drawPath(el, doc, conf);
+    Editor.show(doc);
+    Path.show(doc, conf);
 }
 
 
@@ -56,20 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dummyGcode += "G0 Z10 ; low\n";
     dummyGcode += "M0 Add pen an click ; pause\n";
 
-    dummyGcode += "; Square\n";
-    dummyGcode += "G90 ; absolute\n";
-    dummyGcode += "G0 F5000 ; high feedrate\n";
-    dummyGcode += "G0 Z12 ; high\n";
-    dummyGcode += "G0 X95 Y95 ; move\n";
-    dummyGcode += "G0 Z10 ; low\n";
-    dummyGcode += "G0 F1500 ; low feedrate\n";
-    dummyGcode += "G91 ; relative\n";
-    dummyGcode += "G0 X10\n";
-    dummyGcode += "G0 Y10\n";
-    dummyGcode += "G0 X-10\n";
-    dummyGcode += "G0 Y-10\n";
-
-    dummyGcode += "; Square\n";
+    dummyGcode += "; Square left\n";
     dummyGcode += "G90 ; absolute\n";
     dummyGcode += "G0 F5000 ; high feedrate\n";
     dummyGcode += "G0 Z12 ; high\n";
@@ -82,7 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
     dummyGcode += "G0 X-10\n";
     dummyGcode += "G0 Y-10\n";
 
-    dummyGcode += "; Square\n";
+    dummyGcode += "; Square mid\n";
+    dummyGcode += "G90 ; absolute\n";
+    dummyGcode += "G0 F5000 ; high feedrate\n";
+    dummyGcode += "G0 Z12 ; high\n";
+    dummyGcode += "G0 X95 Y95 ; move\n";
+    dummyGcode += "G0 Z10 ; low\n";
+    dummyGcode += "G0 F1500 ; low feedrate\n";
+    dummyGcode += "G91 ; relative\n";
+    dummyGcode += "G0 X10\n";
+    dummyGcode += "G0 Y20\n";
+    dummyGcode += "G0 X-10\n";
+    dummyGcode += "G0 Y-20\n";
+
+    dummyGcode += "; Square right\n";
     dummyGcode += "G90 ; absolute\n";
     dummyGcode += "G0 F5000 ; high feedrate\n";
     dummyGcode += "G0 Z12 ; high\n";

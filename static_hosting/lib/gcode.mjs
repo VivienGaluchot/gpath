@@ -291,6 +291,9 @@ class Line {
         this.str = str;
         this.isParsed = false;
 
+        this.editorEl = [];
+        this.graphEl = null;
+
         // array of { str:String, code:?String, value:?String }
         this.tokens = [];
         // String
@@ -389,6 +392,42 @@ class Line {
                 yield { class: "comment", str: this.comment };
             }
         }
+    }
+
+    // graph - editor link
+    // one graph point can be linked to multiple editor lines
+
+    registerEditorEl(el) {
+        el.addEventListener('mouseenter', () => {
+            if (this.graphEl) {
+                this.graphEl.classList.add("alt-hover");
+            }
+        });
+        el.addEventListener('mouseleave', () => {
+            if (this.graphEl) {
+                this.graphEl.classList.remove("alt-hover");
+            }
+        });
+        this.editorEl = el;
+    }
+
+    registerGraphEl(el) {
+        el.addEventListener('mouseenter', () => {
+            if (this.editorEl) {
+                this.editorEl.classList.add("alt-hover");
+            }
+        });
+        el.addEventListener('mouseleave', () => {
+            if (this.editorEl) {
+                this.editorEl.classList.remove("alt-hover");
+            }
+        });
+        el.addEventListener('click', () => {
+            if (this.editorEl) {
+                this.editorEl.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+            }
+        })
+        this.graphEl = el;
     }
 }
 

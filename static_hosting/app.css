@@ -58,9 +58,31 @@ fieldset {
     height: 100%;
 }
 
-.path svg {
+#draw-area {
     height: 100%;
     width: 100%;
+}
+
+#draw-area {}
+
+#draw-area #lines-trace .line,
+#draw-area #lines-no-traces .line {
+    stroke: #999;
+}
+
+#draw-area #lines-no-traces {
+    opacity: .1;
+}
+
+#draw-area #points .point {
+    fill: rgba(0, 136, 255, 0.1);
+}
+
+#draw-area #points .point:hover,
+#draw-area #points .point.alt-hover {
+    stroke: rgba(0, 136, 255, .8);
+    cursor: pointer;
+    stroke-width: .5;
 }
 
 
@@ -70,9 +92,10 @@ fieldset {
     overflow: auto;
     list-style: none;
     padding: 0;
+    margin: 0;
     scrollbar-color: #FFF4 #0004;
     scrollbar-width: thin;
-    margin: 0;
+    padding-bottom: 5rem;
 }
 
 .gcode li {
@@ -82,8 +105,9 @@ fieldset {
     white-space: pre;
 }
 
-.gcode li:hover {
-    background-color: #0001;
+.gcode li:hover,
+.gcode li.alt-hover {
+    background-color: #0002;
 }
 
 .gcode li .index {
